@@ -13,8 +13,8 @@ import json
 
 class IBM(object):
     urlRoot = "https://api.weather.com/"
-    secretKey1 = "766b06226102425cab06226102325c60" #Severe, Renewables, Forecast, Currents, Core & Probabilistic
-    secretKey2 = "564decfe4ed247728decfe4ed20772a7" #for historical
+    secretKey1 = "" #Severe, Renewables, Forecast, Currents, Core & Probabilistic
+    secretKey2 = "" #for historical
 
     def __init__(self, locations, timeoutLimit=5, **kwargs):
         self.timeoutLimit = timeoutLimit
