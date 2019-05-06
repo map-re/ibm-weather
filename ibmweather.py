@@ -19,8 +19,8 @@ import copy
 class IBM(object):
     urlRoot = "https://api.weather.com/"
     #TODO: remove plaintext secret keys
-    secretKey1 = "766b06226102425cab06226102325c60" #Severe, Renewables, Forecast, Currents, Core & Probabilistic
-    secretKey2 = "9d8173065a2fc6a5f025018d27d76d44" #for historical
+    secretKey1 = "" #Severe, Renewables, Forecast, Currents, Core & Probabilistic
+    secretKey2 = "" #for historical
 
     def __init__(self, locations, timeoutLimit=5, **kwargs):
         self.timeoutLimit = timeoutLimit
