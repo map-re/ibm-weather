@@ -19,15 +19,17 @@ import copy
 class IBM(object):
     urlRoot = "https://api.weather.com/"
     #TODO: remove plaintext secret keys
-    secretKey1 = "" #Severe, Renewables, Forecast, Currents, Core & Probabilistic
-    secretKey2 = "" #for historical
+    secretKey1 = "766b06226102425cab06226102325c60" #Severe, Renewables, Forecast, Currents, Core & Probabilistic
+    secretKey2 = "c09d6352470cbbd222d4224400ebfd0e" #for historical
 
     def __init__(self, locations, timeoutLimit=5, **kwargs):
         self.timeoutLimit = timeoutLimit
         self.locations = locations
-        self.workerLimit = None if 'workerLimit' not in kwargs else kwargs['workerLimit']
+        self.workerLimit = 6 if 'workerLimit' not in kwargs else kwargs['workerLimit'] #test machine has six cores
         self.tasktracker = {}
 
+
+    #for all api calls where the url root starts with https://api.weather.com ... with no need for geocode params
     async def getWeatherCompanyStandard(self,**kwargs):
         #TODO: extend to throw errors if these kwargs do not exist
         typeString = kwargs['type']
@@ -63,6 +65,7 @@ class IBM(object):
         END_TIME = default_timer() - START_TIME
         print("Total time elapsed {:5.3f}s".format(END_TIME))
 
+    # for all api calls where the url root starts with https://api.weather.com ... that need geocode params 
     async def getWeatherCompanyGeoParams(self,**kwargs):
         typeString = kwargs['type']
         print(typeString)
@@ -259,7 +262,7 @@ class IBM(object):
         url = None
         if callType is 'getCurrent':
             url = self.urlRoot+'v1/geocode/'+str(llarray[0])+'/'+str(llarray[1])+'/observations.json'
-        elif callType is 'getCurrentOnDemand':
+        elif callType is 'getCurrentsOnDemand':
             url = self.urlRoot+'v3/wx/observations/current'
         elif callType is 'getCurrentTS':
             url = self.urlRoot+'v1/geocode/'+str(llarray[0])+'/'+str(llarray[1])+'/observations/timeseries.json'
