@@ -38,24 +38,23 @@ class IBM(object):
         print(params)
         START_TIME = default_timer()
         if kwargs['call']:
-            loop = asyncio.get_event_loop()
-            async with aiohttp.ClientSession(loop=loop) as session:
-                #with requests.Session() as session:
-                tasks = []
-                
-                for k in self.locations:
-                    tasks.append(asyncio.ensure_future(self.get_async(session,typeString,self.locations[k],params)))
-                
+            with ThreadPoolExecutor(max_workers=self.workerLimit) as executor:
+                with requests.Session() as session:
+                    tasks = []
+                    loop = asyncio.get_event_loop()
+                    for k in self.locations:
+                        tasks.append(loop.run_in_executor(executor,self.get,*(session,typeString,self.locations[k],params,k)))
 
-                responses = await asyncio.gather(*tasks)
-                #print(responses)
-                # loop.run_until_complete(responses)
-                # loop.close()
-                rets = []
-                for response in responses:
-                    l = json.loads(response)
-                    rets.append(l)
-                return rets   
+                    # Initializes the tasks to run and awaits their results
+                    responses = []
+                    for response in await asyncio.gather(*tasks):
+                        print(response)
+                        if type(response) is str:
+                            d = json.loads(response)
+                            responses.append(d)
+                        else:
+                            responses.append(response)
+                    return responses
               
         else:
             #just check base url formation without query parameters
@@ -74,66 +73,30 @@ class IBM(object):
         START_TIME = default_timer()
         if kwargs['call']:
 
-            loop = asyncio.get_event_loop()
-            async with aiohttp.ClientSession(loop=loop) as session:
-                #with requests.Session() as session:
-                tasks = []
-                
-                for k in self.locations:
-                    lls = str(self.locations[k][0])+","+str(self.locations[k][1])
-                    print(lls, typeString)
-                    newparams = {'geocode':lls}
-                    for pk in params:
-                        newparams[pk] = params[pk]
-                    tasks.append(asyncio.ensure_future(self.get_async(session,typeString,self.locations[k],newparams)))
-                
-
-                responses = await asyncio.gather(*tasks)
-                #print(responses)
-                # loop.run_until_complete(responses)
-                # loop.close()
-                rets = []
-                for response in responses:
-                    l = json.loads(response)
-                    rets.append(l)
-                return rets   
-
-        else:
-            #just check base url formation without query parameters
-            for k in self.locations:
-                url = self.createUrl(typeString,self.locations[k])
-                print(url)
-        END_TIME = default_timer() - START_TIME
-        print("Total time elapsed {:5.3f}s".format(END_TIME))
-
-    #old/not used ... consider removing
-    #TODO: extend to boundary type
-    async def getWeatherCompanyPointBoundsParams(self,**kwargs):
-        typeString = kwargs['type']
-        pointType = kwargs['pointType']
-        print(typeString)
-        params = kwargs['params']
-        print(params)
-        START_TIME = default_timer()
-        if kwargs['call']:
             with ThreadPoolExecutor(max_workers=self.workerLimit) as executor:
                 with requests.Session() as session:
                     tasks = []
                     loop = asyncio.get_event_loop()
+                
                     for k in self.locations:
                         lls = str(self.locations[k][0])+","+str(self.locations[k][1])
                         print(lls, typeString)
-                        newparams = {'pointType':pointType,'geocode':lls}
+                        newparams = {'geocode':lls}
                         for pk in params:
                             newparams[pk] = params[pk]
-                        tasks.append(loop.run_in_executor(executor,self.get,*(session,typeString,self.locations[k],newparams)))
-
+                        tasks.append(loop.run_in_executor(executor,self.get,*(session,typeString,self.locations[k],newparams,k))) #session, calltype,lat/lng,params,location,index
+                    
                     # Initializes the tasks to run and awaits their results
                     responses = []
                     for response in await asyncio.gather(*tasks):
-                        d = json.loads(response)
-                        responses.append(d)
+                        print(response)
+                        if type(response) is str:
+                            d = json.loads(response)
+                            responses.append(d)
+                        else:
+                            responses.append(response)
                     return responses
+
         else:
             #just check base url formation without query parameters
             for k in self.locations:
@@ -142,8 +105,6 @@ class IBM(object):
         END_TIME = default_timer() - START_TIME
         print("Total time elapsed {:5.3f}s".format(END_TIME))
 
-    #get cleaned historical
-    #passes params with lat/lng that are empty, and need to be added
     async def getWeatherCompanyCleanedHistorical(self,**kwargs):
         typeString = kwargs['type']
         params = kwargs['params']
@@ -151,28 +112,27 @@ class IBM(object):
         START_TIME = default_timer()
 
         if kwargs['call']:
+            with ThreadPoolExecutor(max_workers=self.workerLimit) as executor:
+                with requests.Session() as session:
+                    tasks = []
+                    loop = asyncio.get_event_loop()
+                    for k in self.locations:
+                        newparams = copy.deepcopy(params)
 
-            loop = asyncio.get_event_loop()
-            async with aiohttp.ClientSession(loop=loop) as session:
-
-                tasks = []
-                
-                for index,k in enumerate(self.locations):
-                    newparams = copy.deepcopy(params)
-
-                    newparams['lat'] = str(self.locations[k][0])
-                    newparams['long'] = str(self.locations[k][1])
-                    tasks.append(asyncio.ensure_future(self.get_async(session,typeString,self.locations[k],newparams, k, index)))
-                
-                responses = await asyncio.gather(*tasks)
-                #print(responses)
-                # loop.run_until_complete(responses)
-                # loop.close()
-                rets = []
-                for response in responses:
-                    l = json.loads(response)
-                    rets.append(l)
-                return rets 
+                        newparams['lat'] = str(self.locations[k][0])
+                        newparams['long'] = str(self.locations[k][1])
+                        tasks.append(loop.run_in_executor(executor,self.get,*(session,typeString,self.locations[k],newparams,k))) #session, calltype,lat/lng,params,location,index
+                    
+                    # Initializes the tasks to run and awaits their results
+                    responses = []
+                    for response in await asyncio.gather(*tasks):
+                        print(response)
+                        if type(response) is str:
+                            d = json.loads(response)
+                            responses.append(d)
+                        else:
+                            responses.append(response)
+                    return responses
 
         else:
             #just check base url formation without query parameters
@@ -218,7 +178,7 @@ class IBM(object):
             raise e
 
 
-    def get(self, session, callType,llarray, params=None, location=None, index=None):
+    def get(self, session, callType,llarray, params=None, location=None):
         try:
             url = self.createUrl(callType, llarray)
             start_time = default_timer()
@@ -232,8 +192,13 @@ class IBM(object):
                 response_time = default_timer() - start_time
                 print("Get session elapsed time {:5.3f}s".format(response_time))
                 if location is not None:
-                    self.tasktracker[index] = location
-                return data
+                    retobj = {}
+                    retobj['location'] = location
+                    retobj['lat-lng'] = llarray
+                    retobj['data'] = json.loads(data)
+                    return retobj
+                else:
+                    return data
         except (requests.exceptions.ReadTimeout) as ce:
             print('FAILURE for Call type {0} url {1}.  Error: {2}'.format(callType, url, ce))
 
