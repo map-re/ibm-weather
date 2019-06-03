@@ -45,14 +45,14 @@ def main():
     # args = {'type':'getHourlyForecast2Day', 'params':{'language':'en-US','format':'json','units':'e','apiKey':i.secretKey1}, 'call':True}
     # future2 = asyncio.ensure_future(i.getWeatherCompanyGeoParams(**args))
     # resp = loop.run_until_complete(future2)
-    # print('results')
-    # print(json.dumps(resp,indent=2))
+    print('results')
+    #print(json.dumps(resp,indent=2))
     
     #TODO: does not return metadata as part of the response, so how to use effectively?
-    # args = {'type':'getHourlyForecast15Day', 'params':{'language':'en-US','format':'json','units':'e','apiKey':i.secretKey1}, 'call':True}
-    # future15 = asyncio.ensure_future(i.getWeatherCompanyGeoParams(**args))
-    # resp = loop.run_until_complete(future15)
-    # print('results')
+    args = {'type':'getHourlyForecast15Day', 'params':{'language':'en-US','format':'json','units':'e','apiKey':i.secretKey1}, 'call':True}
+    future15 = asyncio.ensure_future(i.getWeatherCompanyGeoParams(**args))
+    resp = loop.run_until_complete(future15)
+    print('results')
     # with open('res.json','w') as outfile:
     #     json.dump(resp,outfile,indent=2)
 
@@ -68,7 +68,7 @@ def main():
     # fifteenMinResForecast = asyncio.ensure_future(i.getWeatherCompanyStandard(**args))
     # resp = loop.run_until_complete(fifteenMinResForecast)
     # print('results')
-    # print(json.dumps(resp,indent=2))
+    #print(json.dumps(resp,indent=2))
 
     # TODO: get the params correct on this one, it is a bit trickier than I had originally thought
     # args = {'type':'getProbabalisticForecast', 'params':{'elevation':0,'format':'json','units':'e','apiKey':secretKey1}, 'call':True}
@@ -125,13 +125,13 @@ def main():
     # print(resp)
 
     # want it:  CleanedHistorical
-    startDate = datetime.date(2018,1,1).strftime('%m/%d/%Y')
-    endDate = datetime.date(2018,3,3).strftime('%m/%d/%Y')
-    args = {'type':'getCleanedHistorical','params':{'version':2,'lat':None,'long':None,'startDate':startDate,'endDate':endDate,'interval':'hourly','units':'imperial','format':'json','userKey':i.secretKey2}, 'call':True}
-    powerDisrupt = asyncio.ensure_future(i.getWeatherCompanyCleanedHistorical(**args))
-    resp = loop.run_until_complete(powerDisrupt)
-    print('results')
-    print(json.dumps(resp,indent=2))
+    # startDate = datetime.date(2018,1,1).strftime('%m/%d/%Y')
+    # endDate = datetime.date(2018,3,3).strftime('%m/%d/%Y')
+    # args = {'type':'getCleanedHistorical','params':{'version':2,'lat':None,'long':None,'startDate':startDate,'endDate':endDate,'interval':'hourly','units':'imperial','format':'json','userKey':i.secretKey2}, 'call':True}
+    # powerDisrupt = asyncio.ensure_future(i.getWeatherCompanyCleanedHistorical(**args))
+    # resp = loop.run_until_complete(powerDisrupt)
+    # print('results')
+    # print(json.dumps(resp,indent=2))
 
     # startDate = datetime.date(2018,1,1).strftime('%m/%d/%Y')
     # endDate = datetime.date(2018,12,31).strftime('%m/%d/%Y')

@@ -48,7 +48,7 @@ class IBM(object):
                     # Initializes the tasks to run and awaits their results
                     responses = []
                     for response in await asyncio.gather(*tasks):
-                        print(response)
+                        #print(response)
                         if type(response) is str:
                             d = json.loads(response)
                             responses.append(d)
@@ -89,7 +89,7 @@ class IBM(object):
                     # Initializes the tasks to run and awaits their results
                     responses = []
                     for response in await asyncio.gather(*tasks):
-                        print(response)
+                        #print(response)
                         if type(response) is str:
                             d = json.loads(response)
                             responses.append(d)
@@ -126,7 +126,7 @@ class IBM(object):
                     # Initializes the tasks to run and awaits their results
                     responses = []
                     for response in await asyncio.gather(*tasks):
-                        print(response)
+                        #print(response)
                         if type(response) is str:
                             d = json.loads(response)
                             responses.append(d)
